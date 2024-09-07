@@ -4,10 +4,9 @@ import { Cloudinary } from "@cloudinary/url-gen/index"
 import { auto } from "@cloudinary/url-gen/actions/resize"
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity"
 import { AdvancedImage } from "@cloudinary/react"
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { Box, Container, createTheme, CssBaseline, GlobalStyles, IconButton, Slide, Stack, ThemeProvider, Typography, } from "@mui/material"
+import { Box, Container, createTheme, CssBaseline, GlobalStyles, ThemeProvider, Typography, } from "@mui/material"
 import { useEffect, useState } from "react"
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 
 const theme = createTheme({
   typography: {
@@ -44,9 +43,6 @@ const theme = createTheme({
 function App() {
   const cld = new Cloudinary({ cloud: { cloudName: 'delgya5vj' }})
   const [cards, setCards] = useState([] as any)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [slideDirection, setSlideDirection] = useState<'right' | 'left' | undefined>('left')
-  const cardsPerPage = 3
 
   const advancedImage = (item: string | undefined) => {
     const img = cld
@@ -60,18 +56,9 @@ function App() {
 
   const cardImage: any[] = itemData.map((path) => advancedImage(path))
 
-  const handleNextPage = () => {
-    setSlideDirection('left')
-    setCurrentPage((prevPage) => prevPage + 1)
-  }
-
-  const handlePrevPage = () => {
-    setSlideDirection('right')
-    setCurrentPage((prevPage) => prevPage - 1)
-  }
-
   useEffect(() => {
     setCards(cardImage)
+    console.log(cardImage)
   }, [])
   
   return (
@@ -80,25 +67,11 @@ function App() {
       <GlobalStyles styles={{ body: {backgroundColor: "#F6FB7A"}}} />
       <Container maxWidth={false}>
         <Typography component='div' mt={4} textAlign='center' variant="h1" sx={{ fontSize: 128}}>Dogs</Typography>
-        <Box mt={2} sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-          <IconButton onClick={handlePrevPage} sx={{ margin: 5}} disabled={currentPage === 0}>
-            <ChevronLeftIcon />
-          </IconButton>
-          <Box sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
-            {cards.map((_card: any, index: any) => ( 
-              <Box key={`card-${index}`} sx={{ width: '100%', height: '100%', display: currentPage === index ? 'block' : 'none'}}>
-                <Slide direction={slideDirection} in={currentPage === index} easing={{ enter: theme.transitions.easing.easeInOut, exit: theme.transitions.easing.easeInOut,}} timeout={{ enter: theme.transitions.duration.enteringScreen, exit: 1000}} mountOnEnter unmountOnExit>
-                  <Stack spacing={2} direction='row' alignContent='center' justifyContent='center'>
-                    {cards.slice(index * cardsPerPage, index * cardsPerPage + cardsPerPage)}
-                  </Stack>
-                </Slide>
-              </Box>
-            ))}
-          </Box>
-          <IconButton onClick={handleNextPage} sx={{ margin: 5}} disabled={currentPage >= Math.ceil((cards.length || 0) / cardsPerPage) - 1}>
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
+        <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}>
+          <Masonry gutter="10px">
+            {cards}
+          </Masonry>
+        </ResponsiveMasonry>
       </Container>
     </ThemeProvider>
   )

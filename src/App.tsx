@@ -4,7 +4,7 @@ import { Cloudinary } from "@cloudinary/url-gen/index"
 import { auto } from "@cloudinary/url-gen/actions/resize"
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity"
 import { AdvancedImage } from "@cloudinary/react"
-import { Box, Container, createTheme, CssBaseline, GlobalStyles, ThemeProvider, Typography, } from "@mui/material"
+import { Container, createTheme, CssBaseline, GlobalStyles, ThemeProvider, Typography, } from "@mui/material"
 import { useEffect, useState } from "react"
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 
